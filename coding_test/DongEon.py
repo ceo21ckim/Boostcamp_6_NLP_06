@@ -546,7 +546,7 @@ def solution(N, A, B):
 경화가 한 상자에 담으려는 귤의 개수 k와 귤의 크기를 담은 배열 tangerine이 매개변수로 주어집니다. 
 경화가 귤 k개를 고를 때 크기가 서로 다른 종류의 수의 최솟값을 return 하도록 solution 함수를 작성해주세요.
 '''
-        
+# 귤 고르기
 # solution 1 -> collections.Counter
 from collections import Counter
 def solution(k, tangerine):
@@ -557,3 +557,141 @@ def solution(k, tangerine):
             n += v
             answer += 1
     return answer
+
+'''
+문제 설명
+다음 규칙을 지키는 문자열을 올바른 괄호 문자열이라고 정의합니다.
+
+(), [], {} 는 모두 올바른 괄호 문자열입니다.
+만약 A가 올바른 괄호 문자열이라면, (A), [A], {A} 도 올바른 괄호 문자열입니다. 
+예를 들어, [] 가 올바른 괄호 문자열이므로, ([]) 도 올바른 괄호 문자열입니다.
+만약 A, B가 올바른 괄호 문자열이라면, AB 도 올바른 괄호 문자열입니다. 
+예를 들어, {} 와 ([]) 가 올바른 괄호 문자열이므로, {}([]) 도 올바른 괄호 문자열입니다.
+대괄호, 중괄호, 그리고 소괄호로 이루어진 문자열 s가 매개변수로 주어집니다. 
+이 s를 왼쪽으로 x (0 ≤ x < (s의 길이)) 칸만큼 회전시켰을 때 s가 올바른 괄호 문자열이 되게 하는 x의 개수를 return 하도록 solution 함수를 완성해주세요.
+
+
+Example:
+s	        result
+"[](){}"	3
+"}]()[{"	2
+"[)(]"	    0
+"}}}"	    0
+
+
+다음 표는 "[](){}" 를 회전시킨 모습을 나타낸 것입니다.
+x	s를 왼쪽으로 x칸만큼 회전	올바른 괄호 문자열?
+0	"[](){}"	                O
+1	"](){}["	                X
+2	"(){}[]"	                O
+3	"){}[]("	                X
+4	"{}[]()"	                O
+5	"}[](){"	                X
+올바른 괄호 문자열이 되는 x가 3개이므로, 3을 return 해야 합니다.
+
+
+다음 표는 "}]()[{" 를 회전시킨 모습을 나타낸 것입니다.
+x	s를 왼쪽으로 x칸만큼 회전	올바른 괄호 문자열?
+0	"}]()[{"	                X
+1	"]()[{}"	                X
+2	"()[{}]"	                O
+3	")[{}]("	                X
+4	"[{}]()"	                O
+5	"{}]()["	                X
+
+'''
+
+# 괄호 회전하기
+from collections import deque
+def solution(s):
+    answer = 0
+    for j in range(len(s)):
+        t = (s*2)[j:j+len(s)]
+        deq = deque()
+        for i in t:
+            if not deq:
+                deq.append(i)
+            else:
+                if i in ['(', '[', '{']:
+                    deq.append(i)
+                else:
+                    if i == ')' and deq[-1] == '(':
+                        deq.pop()
+                    elif i == ']' and deq[-1] == '[':
+                        deq.pop()
+                    elif i == '}' and deq[-1] == '{':
+                        deq.pop()
+        if not deq:
+            answer += 1
+    return answer
+
+
+
+'''
+문제 설명
+XYZ 마트는 일정한 금액을 지불하면 10일 동안 회원 자격을 부여합니다. 
+XYZ 마트에서는 회원을 대상으로 매일 한 가지 제품을 할인하는 행사를 합니다. 할인하는 제품은 하루에 하나씩만 구매할 수 있습니다. 
+알뜰한 정현이는 자신이 원하는 제품과 수량이 할인하는 날짜와 10일 연속으로 일치할 경우에 맞춰서 회원가입을 하려 합니다.
+
+예를 들어, 정현이가 원하는 제품이 바나나 3개, 사과 2개, 쌀 2개, 돼지고기 2개, 냄비 1개이며, 
+XYZ 마트에서 15일간 회원을 대상으로 할인하는 제품이 날짜 순서대로 
+치킨, 사과, 사과, 바나나, 쌀, 사과, 돼지고기, 바나나, 돼지고기, 쌀, 냄비, 바나나, 사과, 바나나인 경우에 대해 알아봅시다. 
+첫째 날부터 열흘 간에는 냄비가 할인하지 않기 때문에 첫째 날에는 회원가입을 하지 않습니다. 
+둘째 날부터 열흘 간에는 바나나를 원하는 만큼 할인구매할 수 없기 때문에 둘째 날에도 회원가입을 하지 않습니다. 
+셋째 날, 넷째 날, 다섯째 날부터 각각 열흘은 원하는 제품과 수량이 일치하기 때문에 셋 중 하루에 회원가입을 하려 합니다.
+
+정현이가 원하는 제품을 나타내는 문자열 배열 want와 정현이가 원하는 제품의 수량을 나타내는 정수 배열 number, 
+XYZ 마트에서 할인하는 제품을 나타내는 문자열 배열 discount가 주어졌을 때, 
+회원등록시 정현이가 원하는 제품을 모두 할인 받을 수 있는 회원등록 날짜의 총 일수를 return 하는 solution 함수를 완성하시오. 
+가능한 날이 없으면 0을 return 합니다.
+
+Example:
+want	                                    number	        discount	                                                        result
+["banana", "apple", "rice", "pork", "pot"]	[3, 2, 2, 2, 1]	["chicken", "apple", "apple", "banana", "rice", "apple", "pork", 
+                                                             "banana", "pork", "rice", "pot", "banana", "apple", "banana"]	    3
+["apple"]	                                [10]	        ["banana", "banana", "banana", "banana", "banana", "banana", 
+                                                             "banana", "banana", "banana", "banana"]	                        0
+
+
+'''
+# 할인행사
+from collections import Counter
+def solution(want, number, discount):
+    answer = 0
+    values = {w:n for w, n in zip(want, number)}
+    for i in range(len(discount) - 9):
+        if values == Counter(discount[i:i+10]):
+            answer += 1
+    return answer
+
+
+
+
+# 모음 사전
+
+# solution 1
+from itertools import product
+def solution(word):
+    words = []
+    for i in range(1, 6):
+        for w in product(['A', 'E', 'I', 'O', 'U'], repeat=i):
+            words.append(''.join(list(w)))
+    words.sort()
+    return words.index(word) + 1
+
+
+# 의상
+
+from collections import defaultdict
+def solution(clothes):
+    inform = defaultdict(list)
+    answer = 1
+    for cl in clothes:
+        k, v = cl 
+        inform[v] += [k]
+    
+    for k in inform.keys():
+        n = len(inform[k])
+        answer *= (n + 1)
+    
+    return answer - 1
